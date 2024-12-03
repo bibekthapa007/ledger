@@ -19,7 +19,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "generate": "npx prisma generate --schema=./prisma/schema.prisma",
-    "migrate": "npx prisma migrate dev --schema=./prisma/schema.prisma --name add --preview-feature --create-only",
+    "migrate": "npx prisma migrate dev --schema=./prisma/schema.prisma --preview-feature --create-only",
     "deploy": "npx prisma migrate deploy --schema=./prisma/schema.prisma --preview-feature"
   },
   "dependencies": {
@@ -27,9 +27,12 @@
     "@nestjs/core": "^10.0.0",
     "@nestjs/platform-express": "^10.0.0",
     "@prisma/client": "^4.15.0",
+    "class-validator": "^0.14.1",
+    "dayjs": "^1.11.13",
     "prisma": "^4.15.0",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "uuid": "^11.0.3"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

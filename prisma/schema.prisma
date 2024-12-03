@@ -10,8 +10,49 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Book {
-  id Int @id @default(autoincrement())
-  title String
-  description String?
+model User {
+  id                   Int        @id @default(autoincrement())
+  name                 String
+  email                String      @unique
+  password             String
+  createdAt            DateTime    @default(now())  @map("created_at")
+  updatedAt            DateTime?   @updatedAt  @map("updated_at")
+  
+  transactions         Transaction[] @relation("CreatedTransactions")
+  updatedTransactions  Transaction[] @relation("UpdatedTransactions")
+
+  @@map("users")
+}
+
+model Transaction {
+  id                  String           @id @default(uuid()) @db.Uuid
+  transactionAmount   Float                                  @map("transaction_amount")
+  transactionType     TransactionType                       @map("transaction_type")
+  ledgerAccount       LedgerAccount                         @map("ledger_account")
+  transactionStatus   TransactionStatus                    @map("transaction_status")
+  createdBy           Int                     @map("created_by")
+  createdAt           DateTime         @default(now())   @map("created_at")
+  updatedBy           Int?                     @map("updated_by")
+  updatedAt           DateTime?         @updatedAt        @map("updated_at")
+
+  createdUser         User?             @relation("CreatedTransactions", fields: [createdBy], references: [id])
+  updatedUser         User?             @relation("UpdatedTransactions", fields: [updatedBy], references: [id])
+
+  @@map("transactions")
+}
+
+enum TransactionType {
+  DEBIT
+  CREDIT
+}
+
+enum LedgerAccount {
+  CHECK_IN
+  PAYABLE
+}
+
+enum TransactionStatus {
+  PENDING
+  FULFILLED
+  REJECTED
 }
