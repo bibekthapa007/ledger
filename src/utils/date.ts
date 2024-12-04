@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+import * as moment from 'moment';
 
 import { YYYY_MM_DD } from 'src/constants/date';
 
@@ -9,14 +9,14 @@ import { YYYY_MM_DD } from 'src/constants/date';
  * @returns {string} - The current date and time in the specified format.
  */
 export function getCurrentDate(format = YYYY_MM_DD): string {
-  return dayjs().format(format);
+  return moment().format(format);
 }
 
 /**
  * Get the current date
  *
- * @returns {string}
+ * @returns {Date}
  */
 export function getDate(): Date {
-  return dayjs().toDate();
+  return moment().toDate();
 }

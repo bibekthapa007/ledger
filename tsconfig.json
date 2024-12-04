@@ -1,9 +1,7 @@
 {
   "compilerOptions": {
-    "module": "ESNext",
+    "module": "commonjs",
     "declaration": true,
-    "moduleResolution": "Node",
-    "esModuleInterop": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,

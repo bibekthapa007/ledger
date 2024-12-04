@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 
-import { LedgerAccount } from '@prisma/client';
+import { LedgerAccount, TransactionStatus } from '@prisma/client';
 
 import { LedgerService } from './ledger.service';
 import { CreateTransactionDTO } from './dto/create-transaction.dto';
@@ -22,7 +22,7 @@ const tempUserId = 1;
 export class LedgerController {
   constructor(private readonly ledgerService: LedgerService) {}
 
-  @Get()
+  @Get('transactions')
   async getAllTransaction(
     @Req() request: Request,
     @Res() response: Response,
@@ -40,7 +40,7 @@ export class LedgerController {
     @Body() transactionBody: CreateTransactionDTO,
     @Res() response: Response,
   ): Promise<any> {
-    const transaction = this.ledgerService.createTransaction(
+    const transaction = await this.ledgerService.createTransaction(
       transactionBody,
       tempUserId,
     );
@@ -57,7 +57,7 @@ export class LedgerController {
     @Query('date') date: string,
     @Res() response: Response,
   ): Promise<any> {
-    const balance = this.ledgerService.getBalance(ledgerAccount, date);
+    const balance = await this.ledgerService.getBalance(ledgerAccount, date);
 
     return response.status(200).json({
       message: 'Balance fetched successfully.',
@@ -70,7 +70,7 @@ export class LedgerController {
     @Param('id') id: string,
     @Res() response: Response,
   ): Promise<any> {
-    const data = this.ledgerService.getTransactionStatus(id);
+    const data = await this.ledgerService.getTransactionStatus(id);
 
     return response.status(200).json({
       message: 'Transaction status fetched successfully.',
@@ -78,12 +78,17 @@ export class LedgerController {
     });
   }
 
-  @Patch('transaction/:id/status/statusType')
+  @Patch('transactions/:id/status/:transactionStatus')
   async updateTransactionStatus(
     @Param('id') id: string,
+    @Param('transactionStatus') transactionStatus: TransactionStatus,
     @Res() response: Response,
   ): Promise<any> {
-    const data = this.ledgerService.updateTransactionStatus(id, tempUserId);
+    const data = await this.ledgerService.updateTransactionStatus(
+      id,
+      transactionStatus,
+      tempUserId,
+    );
 
     return response.status(201).json({
       message: 'Transaction status updated successfully.',

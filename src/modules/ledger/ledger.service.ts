@@ -20,8 +20,12 @@ export class LedgerService {
   logger: Logger;
   private readonly transactionModel: TransactionModal;
 
-  constructor(private prisma: PrismaService) {
+  constructor(
+    private prisma: PrismaService,
+    transactionModel: TransactionModal,
+  ) {
     this.logger = new Logger('LedgerService');
+    this.transactionModel = transactionModel;
   }
 
   async getAllTransaction(): Promise<Transaction[]> {
@@ -52,6 +56,8 @@ export class LedgerService {
     }
 
     return await this.prisma.$transaction(async (trx) => {
+      await trx.$executeRaw`SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;`;
+
       const balance = await this.getBalance(ledgerAccount, null, trx);
 
       const currentAmount = balance - transactionAmount;
@@ -85,7 +91,7 @@ export class LedgerService {
 
     this.logger.log(`Calculating balance for ledger account: ${ledgerAccount}`);
 
-    return this.transactionModel.calculateBalance(
+    return await this.transactionModel.calculateBalance(
       ledgerAccount,
       filterDate,
       trx,
@@ -138,6 +144,7 @@ export class LedgerService {
    * Update the status of a transaction.
    *
    * @param {string} id - The unique identifier of the transaction to update.
+   * @param {number} transactionStatus - The transactionStatus to update.
    * @param {number} updatedBy - The ID of the user making the update.
    * @returns {Promise<Transaction>} - A promise resolving to the updated transaction object.
    */

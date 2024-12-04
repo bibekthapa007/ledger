@@ -1,21 +1,27 @@
+import { Injectable } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
+
 import {
   Prisma,
   Transaction,
-  PrismaClient,
   LedgerAccount,
   TransactionType,
   TransactionStatus,
 } from '@prisma/client';
+
+import { PrismaService } from 'src/prisma.service';
+
 import { CreateTransactionDTO } from './dto/create-transaction.dto';
 
 /**
  * Represents a financial transaction.
  */
+@Injectable()
 export class TransactionModal {
-  private prisma: PrismaClient;
+  private prisma: PrismaService;
   private tableName = 'transactions';
 
-  constructor(prisma: PrismaClient) {
+  constructor(prisma: PrismaService) {
     this.prisma = prisma;
   }
 
@@ -52,9 +58,11 @@ export class TransactionModal {
   ): Promise<Transaction> {
     const transactionClient = trx || this.prisma;
 
+    const newTransactionId = uuidv4();
+
     return transactionClient.transaction.create({
       data: {
-        id: data.transactionAmount.toString(),
+        id: newTransactionId,
         transactionAmount: data.transactionAmount,
         transactionType: data.transactionType,
         ledgerAccount: data.ledgerAccount,
@@ -85,7 +93,7 @@ export class TransactionModal {
         transactionAmount: true,
       },
       where: {
-        ledgerAccount,
+        ...(ledgerAccount ? { ledgerAccount } : {}),
         createdAt: {
           lte: filterDate,
         },
