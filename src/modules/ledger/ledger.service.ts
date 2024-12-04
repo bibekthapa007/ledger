@@ -127,12 +127,7 @@ export class LedgerService {
       );
     }
 
-    const inValidValidStatus: TransactionStatus[] = [
-      TransactionStatus.PENDING,
-      TransactionStatus.FULFILLED,
-    ];
-
-    if (!inValidValidStatus.includes(newTransactionStatus)) {
+    if (transactionStatus !== TransactionStatus.PENDING) {
       throw new BadRequestException(
         `Invalid transaction status update requested.`,
       );
@@ -140,7 +135,7 @@ export class LedgerService {
   }
 
   /**
-   * Update the status of a transaction to FULFILLED.
+   * Update the status of a transaction.
    *
    * @param {string} id - The unique identifier of the transaction to update.
    * @param {number} updatedBy - The ID of the user making the update.
@@ -159,7 +154,10 @@ export class LedgerService {
       throw new BadRequestException(`Transaction with id: ${id} not found.`);
     }
 
-    this.verifyUpdateStatus(transaction.transactionStatus, transactionStatus);
+    await this.verifyUpdateStatus(
+      transaction.transactionStatus,
+      transactionStatus,
+    );
 
     return this.transactionModel.updateStatus(id, transactionStatus, updatedBy);
   }

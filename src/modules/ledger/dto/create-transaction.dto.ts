@@ -11,7 +11,4 @@ export class CreateTransactionDTO {
 
   @IsString()
   ledgerAccount: LedgerAccount;
-
-  @IsString()
-  createdBy: string;
 }
