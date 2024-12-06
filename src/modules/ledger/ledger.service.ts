@@ -56,7 +56,7 @@ export class LedgerService {
     }
 
     return await this.prisma.$transaction(async (trx) => {
-      await trx.$executeRaw`SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;`;
+      // await trx.$executeRaw`SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;`;
 
       const balance = await this.getBalance(ledgerAccount, null, trx);
 
